@@ -27,27 +27,33 @@ def retorna_minimo_moedas(valor, tipos_moedas):
 def retorna_minimo_moedas_FB(tipos_moedas, valor):
 	if valor == 0:
 		return 0
-	
-	resultado = sys.maxint
-	
-	for moeda in tipos_moedas:
-		
-		if (moeda <= valor):
-			resultado = min(resultado, retorna_minimo_moedas_FB(tipos_moedas, valor - moeda) + 1) 
-		
-	return resultado	 
 
-# Mochila Binaria interativo
-  
-# Retorna o valor maximo que cabe na mochila com 
-# capacidade peso_maximo
-def mochila_binaria(peso_maximo, pesos, valores, n): 
-  
-    if n == 0 or peso_maximo == 0 : 
-        return 0
-  
-    if (pesos[n-1] > peso_maximo): 
-        return mochila_binaria(peso_maximo, pesos, valores, n-1) 
-    else: 
-        return max(valores[n-1] + mochila_binaria(peso_maximo-pesos[n-1], pesos, valores, n-1), 
-                   mochila_binaria(peso_maximo, pesos, valores, n-1)) 
+	resultado = sys.maxint
+
+	for moeda in tipos_moedas:
+
+		if (moeda <= valor):
+			resultado = min(resultado, retorna_minimo_moedas_FB(tipos_moedas, valor - moeda) + 1)
+
+	return resultado
+
+# Mochila Binaria PD
+def mochila_binaria(peso_maximo, pesos, valores, n):
+
+    M = []
+    for i in range(n + 1):
+        M.append([])
+        for j in range(peso_maximo + 1):
+            M[i].append(i + j)
+
+    for item in range(1, n + 1):
+        for capacity in range(1, peso_maximo + 1):
+            if pesos[item - 1] > capacity:
+                M[item][capacity] = M[item - 1][capacity]
+            else:
+                M[item][capacity] = max( \
+                    M[item - 1][capacity],
+                    M[item - 1][capacity - pesos[item - 1]] + valores[item - 1]
+                )
+
+    return M[-1][-1]
